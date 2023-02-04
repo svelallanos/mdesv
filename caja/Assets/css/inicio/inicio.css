@@ -1,0 +1,18 @@
+.gallery img {
+    max-width: 100%;
+    margin-bottom: 0.5em;
+    display: block;
+    outline: 1px solid white;
+    outline-offset: -5px;
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.gallery img:hover {
+    filter: brightness(0.5);
+}
+
+.gallery {
+    columns: 6;
+    column-gap: 0.5em;
+}

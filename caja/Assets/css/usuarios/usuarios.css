@@ -1,0 +1,50 @@
+.__box_usuario .card-image img {
+    /* height: 380px; */
+    border-radius: 5px;
+    transition: 0.5s all ease;
+}
+
+.__usuarios_disenio .card{
+    border: 3px solid #019b7f;
+}
+
+#check_editar_rol, .roles_update {
+    cursor: pointer;
+}
+
+/* diseño de los cards en movil */
+@media screen and (max-width: 450px) {
+    .card_movil .col-6{
+        width: 100%;
+    }     
+}
+
+
+/* nuevo diseño caja */
+.__img_editarperfil {
+    width: 60%;
+}
+
+@media screen and (max-width: 992px) {
+    .__img_editarperfil {
+        width: 30%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .__img_editarperfil {
+        width: 45%;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .__img_editarperfil {
+        width: 60%;
+    }
+}
+
+@media screen and (max-width: 370px) {
+    .__img_editarperfil {
+        width: 100%;
+    }
+}
