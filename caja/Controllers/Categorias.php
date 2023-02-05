@@ -44,6 +44,14 @@ class Categorias extends Controllers
             type="button" 
             class="btn btn-info btn-sm btn_editarCategorias">
             <i class="feather-edit"></i>
+            </button>
+            
+            <button 
+            data-id="' . $value['categoria_id'] . '" 
+            title="Eliminar categoria" 
+            type="button" 
+            class="ml-2 btn btn-danger btn-sm btn_deleteCategorias">
+            <i class="feather-trash-2"></i>
             </button>';
         }
         json($dataCategorias);
