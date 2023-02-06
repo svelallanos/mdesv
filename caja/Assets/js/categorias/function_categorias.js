@@ -5,6 +5,7 @@ $(document).ready(function () {
     openModal();
     updateCategorias();
     saveCategorias();
+    deleteCategorias();
 });
 
 function cargarCategorias() {
@@ -126,6 +127,57 @@ function saveCategorias() {
                 icon: 'error',
                 title: 'Error del servidor : ' + error
             })
+        });
+    });
+}
+
+function deleteCategorias() {
+    $(document).on("click", ".btn_deleteCategorias", function () {
+        let id = $(this).attr("data-id");
+        let descripcion = $(this).attr("data-descripcion");
+
+        Swal.fire({
+            title: 'ELIMINAR REGISTRO',
+            text: '¿Estas seguro de eliminar el registro: ' + descripcion.toUpperCase() + '?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, Continuar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                const formData = new FormData();
+                formData.append('categorias_id', id);
+
+                abrirLoadingModal();
+                const request = axios.post(base_url + 'Categorias/deleteCategorias', formData);
+
+                request.then(res => {
+
+                    cerrarLoadingModal();
+                    if (res.data.status) {
+                        isTableCategorias.ajax.reload(() => cerrarLoadingModal());
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Registro : ' + descripcion.toUpperCase() + ' eliminado correctamente.',
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: res.data.isValue,
+                            title: res.data.message
+                        });
+                    }
+                });
+
+                request.catch(error => {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Error del servidor : ' + error
+                    })
+                });
+            }
         });
     });
 }

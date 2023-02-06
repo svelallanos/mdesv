@@ -16,6 +16,14 @@ class categoriasModel extends Mysql
     return $result;
   }
 
+  public function dataAllGenerica(int $categoria_id)
+  {
+    $sql = 'SELECT * FROM generica
+    WHERE categoria_id = :categoria_id';
+    $result = $this->select_all($sql, array('categoria_id' => $categoria_id), DB_CAJA);
+    return $result;
+  }
+
 
   // funcion select
 
@@ -68,5 +76,16 @@ class categoriasModel extends Mysql
 
     $result = $this->update($sql, $arraData, DB_CAJA);
     return $result;
+  }
+
+  // function delete
+
+  public function deleteCategoria(int $categoria_id)
+  {
+    $sql = 'DELETE FROM categoria
+    WHERE categoria_id = :categoria_id';
+    $request = $this->delete($sql, array('categoria_id' => $categoria_id), DB_CAJA);
+
+    return $request;
   }
 }

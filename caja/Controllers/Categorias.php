@@ -48,6 +48,7 @@ class Categorias extends Controllers
             
             <button 
             data-id="' . $value['categoria_id'] . '" 
+            data-descripcion="' . $value['categoria_descripcion'] . '" 
             title="Eliminar categoria" 
             type="button" 
             class="ml-2 btn btn-danger btn-sm btn_deleteCategorias">
@@ -55,6 +56,70 @@ class Categorias extends Controllers
             </button>';
         }
         json($dataCategorias);
+    }
+
+    public function saveCategorias()
+    {
+        parent::verificarLogin(true);
+
+        $response = [
+            'status' => false,
+            'message' => 'Error al momento de registrar los datos.',
+            'isValue' => 'error'
+        ];
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            json($response);
+        }
+
+        if (!isset($_POST['__add_codigo']) || empty($_POST['__add_codigo'])) {
+
+            $response['message'] = "Código de la categoría ingresado es inválido, ingrese nuevamente.";
+            $response['isValue'] = "warning";
+
+            json($response);
+        }
+
+        if (!isset($_POST['__add_descripcion']) || empty($_POST['__add_descripcion'])) {
+
+            $response['message'] = "Descripción de la categoría ingresado es inválido, ingrese nuevamente.";
+            $response['isValue'] = "warning";
+
+            json($response);
+        }
+
+        $strCodigo = strClean($_POST['__add_codigo']);
+        $strDescripcion = strClean($_POST['__add_descripcion']);
+
+        // Verificamos que no exista otro categoria con este mismo codigo
+        $dataCategoriaByCod = $this->model->dataCategoriaByCod($strCodigo);
+        if ($dataCategoriaByCod) {
+            $response['message'] = "Ya se encuentra registrado este código, ingrese nuevamente.";
+            $response['isValue'] = "warning";
+            json($response);
+        }
+
+        // Verificamos la descripcion de la categoria
+        $dataCategoriaByDesc = $this->model->dataCategoriaByDesc($strDescripcion);
+        if ($dataCategoriaByDesc) {
+            $response['message'] = "Ya se encuentra registrado esta descripcion de la categoría, ingrese nuevamente.";
+            $response['isValue'] = "warning";
+            json($response);
+        }
+
+        // Insertamos los nuevos datos en la tabla categoria
+        $saveData = $this->model->saveCatogoria($strCodigo, $strDescripcion);
+        if (!$saveData) {
+            json($response);
+        }
+
+        $response = [
+            'status' => true,
+            'message' => 'Categoría : ' . strtoupper($strDescripcion) . ' registrado correctamente',
+            'isValue' => 'success'
+        ];
+
+        json($response);
     }
 
     public function updateCategorias()
@@ -137,63 +202,44 @@ class Categorias extends Controllers
         json($response);
     }
 
-    public function saveCategorias() {
+    public function deleteCategorias()
+    {
         parent::verificarLogin(true);
 
         $response = [
             'status' => false,
-            'message' => 'Error al momento de registrar los datos.',
+            'message' => 'Error al momento de eliminar el registro.',
             'isValue' => 'error'
         ];
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        // Validamos si existe un metodo
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['categorias_id']) || intval($_POST['categorias_id']) == 0) {
             json($response);
         }
 
-        if (!isset($_POST['__add_codigo']) || empty($_POST['__add_codigo'])) {
-
-            $response['message'] = "Código de la categoría ingresado es inválido, ingrese nuevamente.";
-            $response['isValue'] = "warning";
-
+        // validamos que el id exista en la DB
+        $dataCategoria = $this->model->dataCategoria($_POST['categorias_id']);
+        if (!$dataCategoria) {
             json($response);
         }
 
-        if (!isset($_POST['__add_descripcion']) || empty($_POST['__add_descripcion'])) {
-
-            $response['message'] = "Descripción de la categoría ingresado es inválido, ingrese nuevamente.";
-            $response['isValue'] = "warning";
-
+        // Validamos que no tenga dependencias
+        $dataGenerica = $this->model->dataAllGenerica($_POST['categorias_id']);
+        if (!empty($dataGenerica)) {
+            $response['message'] = 'Esta categoría tiene dependencias, por lo tanto no se puede eliminar.';
+            $response['isValue'] = 'warning';
             json($response);
         }
 
-        $strCodigo = strClean($_POST['__add_codigo']);
-        $strDescripcion = strClean($_POST['__add_descripcion']);
-
-        // Verificamos que no exista otro categoria con este mismo codigo
-        $dataCategoriaByCod = $this->model->dataCategoriaByCod($strCodigo);
-        if ($dataCategoriaByCod) {
-            $response['message'] = "Ya se encuentra registrado este código, ingrese nuevamente.";
-            $response['isValue'] = "warning";
-            json($response);
-        }
-
-        // Verificamos la descripcion de la categoria
-        $dataCategoriaByDesc = $this->model->dataCategoriaByDesc($strDescripcion);
-        if ($dataCategoriaByDesc) {
-            $response['message'] = "Ya se encuentra registrado esta descripcion de la categoría, ingrese nuevamente.";
-            $response['isValue'] = "warning";
-            json($response);
-        }
-
-        // Insertamos los nuevos datos en la tabla categoria
-        $saveData = $this->model->saveCatogoria($strCodigo, $strDescripcion);
-        if (!$saveData) {
+        // eliminamos de la DB
+        $deleteCategoria = $this->model->deleteCategoria($_POST['categorias_id']);
+        if (!$deleteCategoria) {
             json($response);
         }
 
         $response = [
             'status' => true,
-            'message' => 'Categoría : ' . strtoupper($strDescripcion) . ' registrado correctamente',
+            'message' => 'Registro eliminado correctamente.',
             'isValue' => 'success'
         ];
 
