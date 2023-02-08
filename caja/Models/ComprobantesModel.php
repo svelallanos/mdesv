@@ -43,10 +43,10 @@ class ComprobantesModel extends Mysql
 
   public function saveComprobante(string $comprobantes_serie, string $comprobantes_descripcion)
   {
-    $sql = "INSERT INTO `comprobantes` 
-    (`comprobantes_id`, `comprobantes_descripcion`, `comprobantes_numero`, `comprobantes_serie`, `comprobantes_estado`, `comprobantes_fechacreate`, `comprobantes_fechaupdate`) 
+    $sql = "INSERT INTO comprobantes 
+    (comprobantes_descripcion, comprobantes_serie) 
     VALUES 
-    (NULL, :comprobantes_descripcion, NULL, :comprobantes_serie, '1', current_timestamp(), current_timestamp())";
+    (:comprobantes_descripcion, :comprobantes_serie)";
     $result = $this->insert($sql, array('comprobantes_descripcion' => $comprobantes_descripcion, 'comprobantes_serie' => $comprobantes_serie), DB_CAJA);
     return $result;
   }

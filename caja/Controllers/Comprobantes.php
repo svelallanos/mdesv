@@ -80,6 +80,11 @@ class Comprobantes extends Controllers
         $strDescripcion = strClean($_POST['__add_descripcion']);
 
         // Verificamos que no exista otro categoria con este mismo codigo
+        // corregir nombres de consultas
+        // Validar que sea entero la serie
+        // 0 - 9 agregamos dos ceros al prinmcipio  009
+        // Validar que como minimo tenga 5 caracteres la descripcion
+
         $dataCategoriaByCod = $this->model->dataComprobanteBySerie($strSerie);
         if ($dataCategoriaByCod) {
             $response['message'] = "Ya se encuentra registrado este numero de SERIE, ingrese nuevamente.";
@@ -119,6 +124,13 @@ class Comprobantes extends Controllers
             'message' => 'Error al momento de actualizar el registro.',
             'isValue' => 'error'
         ];
+
+        // Cambiar el nombre de los mensajes
+        // Validar que la serie sea numeric
+        // Validar que se ingrese como minimo 5 caracteres en la descripcion
+        // si es de 1 - 9 agregamos 00 al principio
+        // si es de 10 - 99 agregamos 0 al principio
+
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['__edit_id']) || intval($_POST['__edit_id']) == 0) {
             json($response);
@@ -219,6 +231,8 @@ class Comprobantes extends Controllers
         if (!$dataCategoria) {
             json($response);
         }
+
+        // Validar que no tenga registros vinculados
 
         //Eliminamos el registro de la base de datos
         $deleteComprobante = $this->model->deleteComprobante($strId);
